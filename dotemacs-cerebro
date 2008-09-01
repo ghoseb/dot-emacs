@@ -1,0 +1,475 @@
+;; ~/.emacs@cerebro - Baishampayan Ghose <b.ghose@cleartrip.com> -*- emacs-lisp -*-
+;; Time-stamp: "2008-01-22 13:28:26 ghoseb"
+
+;; --------------
+;; Common Lisp :)
+;; --------------
+(require 'cl)
+
+;; ---------------------
+;; General Customisation
+;; ---------------------
+(defvar *home-dir* "/home/ghoseb/")
+
+(setq inhibit-startup-message t)
+(add-to-list 'load-path (concatenate 'string *home-dir* ".emacs.d"))
+(add-to-list 'load-path (concatenate 'string *home-dir* ".emacs.d/slime-cvs"))
+(add-to-list 'load-path (concatenate 'string *home-dir* ".emacs.d/slime-cvs/contrib"))
+;; (add-to-list 'load-path (concatenate 'string *home-dir* ".emacs.d/slime-2.0"))
+(add-to-list 'load-path (concatenate 'string *home-dir* ".emacs.d/emacs-w3m"))
+(add-to-list 'load-path (concatenate 'string *home-dir* ".emacs.d/org"))
+;; (add-to-list 'load-path (concatenate 'string *home-dir* ".emacs.d/cl-lookup"))
+(add-to-list 'load-path (concatenate 'string *home-dir* ".emacs.d/remember"))
+(add-to-list 'load-path (concatenate 'string *home-dir* ".emacs.d/redshank"))
+(setq font-lock-maximum-decoration t)
+(setq visible-bell t)
+(setq require-final-newline t)
+(setq resize-minibuffer-frame t)
+(setq column-number-mode t)
+(setq-default transient-mark-mode t)
+(setq next-line-add-newlines nil)
+(setq blink-matching-paren t)
+(setq blink-matching-delay .25)
+(global-font-lock-mode 1 t)
+(tool-bar-mode -1)
+(menu-bar-mode -1)
+(tooltip-mode -1)
+(show-paren-mode t)
+(set-scroll-bar-mode 'nil)
+(savehist-mode 1)
+(setq truncate-partial-width-windows nil)
+(setq x-select-enable-clipboard t)
+
+;; ----------------------
+;; Final newline handling
+;; ----------------------
+(setq require-final-newline t)
+(setq next-line-extends-end-of-buffer nil)
+(setq next-line-add-newlines nil)
+
+;; -------------------
+;; Everything in UTF-8
+;; -------------------
+(prefer-coding-system 'utf-8)
+(set-language-environment 'UTF-8)
+(set-default-coding-systems             'utf-8)
+(setq file-name-coding-system           'utf-8)
+(setq default-buffer-file-coding-system 'utf-8)
+(setq coding-system-for-write           'utf-8)
+(set-keyboard-coding-system             'utf-8)
+(set-terminal-coding-system             'utf-8)
+(set-clipboard-coding-system            'utf-8)
+(set-selection-coding-system            'utf-8)
+(setq default-process-coding-system '(utf-8 . utf-8))
+
+;; ----------------------
+;; Don't take any backups
+;; ----------------------
+(setq backup-inhibited t)
+
+;; -----------
+;; Frame Setup
+;; -----------
+(setq initial-frame-alist '((top . 58)
+                            (left . 10)
+                            (width . 155)
+                            (height . 55)))
+(setq frame-title-format "%b")
+(setq icon-title-format  "%b")
+
+;; ---------
+;; TAB Setup
+;; ---------
+(setq-default tab-width 4
+	      standard-indent 4
+	      indent-tabs-mode nil
+              tab-width 8)
+
+;; -----------------
+;; Misc key mappings
+;; -----------------
+(global-set-key [f1] 'search-forward)
+(global-set-key [f3] 'search-backward)
+(global-set-key [f2] 'replace-string)
+(global-set-key [f4] 'set-justification-full) ;JUSTIFY
+(global-set-key [f6] 'kill-ring-save)         ;COPY
+(global-set-key [f7] 'yank)                   ;PASTE
+(global-set-key [f8] 'kill-region)            ;DELETE
+(global-set-key [f9] 'save-buffer)            ;SAVE
+(global-set-key [C-f7] 'compile)              ;COMPILE
+(global-set-key [C-f1] 'eshell)               ;ESHELL
+(global-set-key "\C-ca" 'auto-fill-mode)
+(global-set-key "\C-cw" 'woman)         ;WOMAN
+
+;; 'y' for 'yes', 'n' for 'no'
+(fset 'yes-or-no-p 'y-or-n-p)
+
+(setq query-replace-highlight t)
+(setq search-highlight t)
+
+(global-set-key (kbd "RET") 'newline-and-indent)
+
+;; -----------------
+;; Insert time stamp
+;; -----------------
+(defun insert-date ()
+  "Insert current date and time."
+  (interactive "*")
+  (insert (current-time-string)))
+
+;; ----------------------------------------
+;; Kill current buffer without confirmation
+;; ----------------------------------------
+(global-set-key "\C-xk" 'kill-current-buffer)
+(defun kill-current-buffer ()
+  "Kill the current buffer, without confirmation."
+  (interactive)
+  (kill-buffer (current-buffer)))
+
+;; ---------
+;; Automodes
+;; ---------
+(setq auto-mode-alist (append '(
+                                ("\\.py$" . python-mode)
+                                ("\\.conf$" . conf-mode)
+                                ("\\.sh$" . shell-script-mode)
+                                ("\\.txt$" . text-mode)
+                                ("\\.lua$" . lua-mode) ; Lua ;)
+                                ("\\.js$" . javascript-mode)
+                                ("\\.lisp" . lisp-mode)
+                                ) auto-mode-alist))
+
+;; ---------
+;; Autoloads
+;; ---------
+(require 'slime)
+(require 'remember)
+(require 'template)
+(require 'smooth-scrolling)
+(require 'w3m)
+(require 'w3m-load)
+(require 'color-theme)
+(require 'uniquify)
+;; (require 'cl-lookup)
+
+(autoload 'paredit-mode "paredit"
+  "Minor mode for pseudo-structurally editing Lisp code."
+  t)
+
+;; Redshank
+(autoload 'redshank-mode "redshank"
+  "Minor mode for editing and refactoring (Common) Lisp code."
+  t)
+(autoload 'turn-on-redshank-mode "redshank"
+  "Turn on Redshank mode.  Please see function `redshank-mode'."
+  t)
+(add-hook 'lisp-mode-hook 'turn-on-redshank-mode)
+
+;; -------------
+;; Custom colors
+;; -------------
+(set-default-font "DejaVu Sans Mono-10")
+
+(eval-after-load "color-theme"
+  '(progn
+    (setq color-theme-is-global nil)
+    (require 'color-theme-g0sub)
+    (color-theme-g0sub)))
+
+;; ---------
+;; Templates
+;; ---------
+(eval-after-load "template"
+  '(progn
+    (template-initialize)))
+
+;; ------------
+;; General Info
+;; ------------
+(setq user-mail-address "b.ghose@cleartrip.com")
+(setq user-full-name "Baishampayan Ghose")
+
+;; ---------------------------
+;; Use Linux Style C Indenting
+;; ---------------------------
+
+(eval-after-load "cc-mode"
+  '(progn
+    (defun my-c-mode-hook ()
+      (c-set-style "linux")
+      (auto-fill-mode)
+      (c-toggle-auto-hungry-state 1))
+    (add-hook 'c-mode-hook 'my-c-mode-hook)))
+
+;; --------------------
+;; Several useful hooks
+;; --------------------
+(add-hook 'before-save-hook 'time-stamp)
+(add-hook 'text-mode-hook 'turn-on-auto-fill)
+
+;; ------
+;; Python
+;; ------
+(setq python-mode-hook
+      '(lambda () (progn
+                    (set-variable 'py-indent-offset 4)
+                    (set-variable 'py-smart-indentation nil)
+                    (set-variable 'indent-tabs-mode nil))))
+
+(eval-after-load "python-mode"
+  '(progn
+    (add-hook 'python-mode-hook 'auto-fill-mode)))
+
+;; ---
+;; C++
+;; ---
+(c-add-style "my-style" 
+             '("stroustrup"
+               (indent-tabs-mode . nil) ;; use spaces rather than tabs ()
+               (c-basic-offset . 4)     ;; indent by four spaces
+               (c-offsets-alist . ((inline-open . 0) ;; custom indentation rules
+                                   (brace-list-open . 0)
+                                   (statement-case-open . +)))))
+
+(eval-after-load "c++-mode"
+  '(progn
+    (defun my-c++-mode-hook ()
+      (c-set-style "my-style") ;; use my-style defined above
+      (auto-fill-mode)
+      (setq c-auto-newline nil)
+      (c-toggle-auto-hungry-state 1))
+    (add-hook 'c++-mode-hook 'my-c++-mode-hook)))
+
+;; -----
+;; WoMan
+;; -----
+(setq-default woman-use-own-frame nil)
+(setq-default Man-notify-method 'pushy)
+
+;; --------
+;; Org Mode
+;; --------
+(eval-after-load "org"
+  '(progn
+    (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+    (define-key mode-specific-map [?a] 'org-agenda)
+    (define-prefix-command 'org-todo-state-map)
+    (define-key org-mode-map "\C-cx" 'org-todo-state-map)
+    (define-key org-todo-state-map "x"
+     #'(lambda nil (interactive) (org-todo "CANCELLED")))
+    (define-key org-todo-state-map "d"
+     #'(lambda nil (interactive) (org-todo "DONE")))
+    (define-key org-todo-state-map "f"
+     #'(lambda nil (interactive) (org-todo "DEFERRED")))
+    (define-key org-todo-state-map "l"
+     #'(lambda nil (interactive) (org-todo "DELEGATED")))
+    (define-key org-todo-state-map "s"
+     #'(lambda nil (interactive) (org-todo "STARTED")))
+    (define-key org-todo-state-map "w"
+     #'(lambda nil (interactive) (org-todo "WAITING")))
+    (define-key org-agenda-mode-map "\C-n" 'next-line)
+    (define-key org-agenda-keymap "\C-n" 'next-line)
+    (define-key org-agenda-mode-map "\C-p" 'previous-line)
+    (define-key org-agenda-keymap "\C-p" 'previous-line)
+    (setq org-export-with-LaTeX-fragments t)))
+
+;; Remember
+(eval-after-load "remember"
+  '(progn
+    (add-hook 'remember-mode-hook 'org-remember-apply-template)
+    (define-key global-map [(control meta ?r)] 'remember)))
+
+;; -----
+;; Tramp
+;; -----
+
+(eval-after-load "tramp"
+  '(progn
+    (setq tramp-default-method "ssh")))
+
+;; ------
+;; Abbrev
+;; ------
+
+(eval-after-load "abbrev"
+  '(progn
+    (setq abbrev-file-name
+      "~/.emacs.d/abbrev_defs")
+    (abbrev-mode 1)
+    (setq default-abbrev-mode t)
+    (setq save-abbrevs t)
+    (quietly-read-abbrev-file)))
+
+;; -----
+;; SLIME
+;; -----
+
+(eval-after-load "slime"
+  '(progn
+    (setq inferior-lisp-program "/opt/acl80/alisp"
+     slime-startup-animation nil
+     lisp-indent-function 'common-lisp-indent-function)
+    
+    (slime-setup '(slime-fancy slime-asdf slime-tramp slime-presentations))
+;;;     (slime-setup :autodoc t)
+    
+    (defmacro defslime-start (name lisp)
+      `(defun ,name ()
+         (interactive)
+         (let ((inferior-lisp-program ,lisp))
+           (slime))))
+    
+    (setq common-lisp-hyperspec-root
+     "file:///home/ghoseb/Documents/HyperSpec/")
+    
+    (setq common-lisp-hyperspec-symbol-table
+     "/home/ghoseb/Documents/HyperSpec/Data/Map_Sym.txt")
+    
+    (defslime-start cmucl "/usr/bin/cmucl")
+    (defslime-start sbcl "/usr/bin/sbcl")
+    (defslime-start acl "/opt/acl80/alisp")
+    (defslime-start acl81 "~/src/acl81/alisp")
+
+    (add-hook 'slime-mode-hook (lambda () (slime-autodoc-mode t)))
+    (add-hook 'slime-mode-hook (lambda () (paredit-mode +1)))
+    (add-hook 'lisp-mode-hook (lambda () (paredit-mode +1)))
+    (add-hook 'slime-repl-mode-hook (lambda () (paredit-mode +1)))
+    (add-hook 'slime-connected-hook (lambda () (paredit-mode +1)))
+
+    (define-key slime-mode-map [(return)] 'paredit-newline)
+
+    ;; Customizations for Slime Lisp
+
+    ;; Slime mode
+    (define-key slime-mode-map (kbd "C-M-t") 'transpose-chars)
+    (define-key slime-mode-map (kbd "C-t") 'transpose-sexps)
+    (define-key slime-mode-map (kbd "C-M-b") 'backward-char)
+    (define-key slime-mode-map (kbd "C-b") 'backward-sexp)
+    (define-key slime-mode-map (kbd "C-M-f") 'forward-char)
+    (define-key slime-mode-map (kbd "C-f") 'forward-sexp)
+    (define-key slime-mode-map (kbd "<f7>") 'vertical-split-slime-repl)
+    (define-key slime-mode-map (kbd "C-c h") 'slime-hyperspec-lookup)
+;;  (define-key slime-mode-map (kbd "C-c C-d h") 'cl-lookup)
+    (define-key slime-mode-map (kbd "<C-S-iso-lefttab>") 'slime-fuzzy-complete-symbol)
+    (define-key slime-mode-map (kbd "TAB") 'slime-indent-and-complete-symbol)
+    (define-key slime-repl-mode-map (kbd "TAB") 'slime-indent-and-complete-symbol)    
+    (define-key slime-repl-mode-map (kbd "<C-S-iso-lefttab>") 'slime-fuzzy-complete-symbol)
+
+    (define-key slime-mode-map (kbd "<f5>") 'slime-selector)
+    (define-key slime-repl-mode-map (kbd "<f5>") 'slime-selector)
+    (define-key sldb-mode-map (kbd "<f5>") 'slime-selector)
+
+    ;; Balanced comments
+    (define-key slime-mode-map (kbd "C-c ;") 'slime-insert-balanced-comments)
+    (define-key slime-mode-map (kbd "C-c M-;") 'slime-remove-balanced-comments)))
+
+(eval-after-load "paredit"
+  '(progn
+    ;; Paredit mode
+    (define-key paredit-mode-map (kbd "(") 'paredit-open-parenthesis)
+    (define-key paredit-mode-map (kbd ")") 'paredit-close-parenthesis)
+
+    (define-key paredit-mode-map (kbd "M-(") (lambda () (interactive) (insert "(")))
+    (define-key paredit-mode-map (kbd "M-)") (lambda () (interactive) (insert ")")))
+
+    (define-key paredit-mode-map (kbd "M-j") 'paredit-newline)
+    (define-key paredit-mode-map (kbd "RET") nil)
+    (define-key paredit-mode-map (kbd "C-i") 'slime-indent-and-complete-symbol)
+
+    (define-key paredit-mode-map (kbd "C-t") 'transpose-sexps)
+    (define-key paredit-mode-map (kbd "C-M-t") 'transpose-chars)
+    (define-key paredit-mode-map (kbd "C-b") 'backward-sexp)
+    (define-key paredit-mode-map (kbd "C-M-b") 'backward-char)
+    (define-key paredit-mode-map (kbd "C-f") 'forward-sexp)
+    (define-key paredit-mode-map (kbd "C-M-f") 'forward-char)
+    (define-key paredit-mode-map (kbd "<C-M-backspace>") 'backward-kill-sexp)))
+
+;; W3M
+(eval-after-load "w3m"
+  '(progn
+    (setq w3m-toggle-inline-images-permanently t)
+    (setq w3m-use-cookies t)
+    (setq browse-url-browser-function 'w3m-browse-url
+     browse-url-new-window-flag t)))
+
+;; RCIRC
+(eval-after-load 'rcirc
+  '(progn
+    (require 'rcirc-color)
+    (setq rcirc-track-minor-mode t)
+    (load "~/.emacs.d/rcirc-auth.el")))
+
+
+;; Uniquify
+(eval-after-load 'uniquify
+  '(progn
+    (setq uniquify-buffer-name-style 'reverse)
+    (setq uniquify-separator "/")
+    (setq uniquify-after-kill-buffer-p t) ; rename after killing uniquified
+    (setq uniquify-ignore-buffers-re "^\\*")))
+
+;; Environment variables for Emacs & Oracle
+
+(setenv "HOME" "/home/ghoseb")
+(setenv "ORACLE_HOME" "/home/ghoseb/src/instantclient_10_2")
+(setenv "LD_LIBRARY_PATH" "/home/ghoseb/src/instantclient_10_2")
+(setenv "TNS_ADMIN" "/home/ghoseb/src/instantclient_10_2/network/admin")
+(setenv "SQLPATH" "/home/ghoseb/src/instantclient_10_2")
+(setenv "PATH" "/home/ghoseb/src/instantclient_10_2:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games")
+
+;; Useful utility functions
+
+(defun revert-all-buffers()
+  "Refreshs all open buffers from their respective files"
+  (interactive)
+  (let* ((list (buffer-list))
+         (buffer (car list)))
+    (while buffer
+      (if (string-match "\\*" (buffer-name buffer)) 
+          (progn
+            (setq list (cdr list))
+            (setq buffer (car list)))
+          (progn
+            (set-buffer buffer)
+            (revert-buffer t t t)
+            (setq list (cdr list))
+            (setq buffer (car list))))))
+  (message "Refreshing open files"))
+
+(defun rename-file-and-buffer (new-name)
+  "Renames both current buffer and file it's visiting to NEW-NAME."
+  (interactive "sNew name: ")
+  (let ((name (buffer-name))
+	(filename (buffer-file-name)))
+    (if (not filename)
+	(message "Buffer '%s' is not visiting a file!" name)
+        (if (get-buffer new-name)
+            (message "A buffer named '%s' already exists!" new-name)
+            (progn (rename-file name new-name 1)
+                   (rename-buffer new-name)
+                   (set-visited-file-name new-name)
+                   (set-buffer-modified-p nil))))))
+
+(defun move-buffer-file (dir)
+  "Moves both current buffer and file it's visiting to DIR."
+  (interactive "DNew directory: ")
+  (let* ((name (buffer-name))
+	 (filename (buffer-file-name))
+	 (dir
+          (if (string-match dir "\\(?:/\\|\\\\)$")
+              (substring dir 0 -1) dir))
+	 (newname (concat dir "/" name)))
+    (if (not filename)
+	(message "Buffer '%s' is not visiting a file!" name)
+        (progn (copy-file filename newname 1)
+               (delete-file filename)
+               (set-visited-file-name newname)
+               (set-buffer-modified-p nil)
+               t))))
+
+;; Custom files
+(setq custom-file "~/.emacs-custom.el")
+(load custom-file 'noerror)
+
+;; Load the skeleton definitions
+(load-library "skels")
