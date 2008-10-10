@@ -1,0 +1,422 @@
+;; ~/.emacs@trinka - Baishampayan Ghose <b.ghose@ubuntu.com> -*- emacs-lisp -*-
+;; Time-stamp: "2008-10-07 19:26:10 ghoseb"
+
+;; CL
+(require 'cl)
+
+;; -----------------------------
+;; General Display Customisation
+;; -----------------------------
+(setq inhibit-startup-message t)
+(setq additional-paths
+'("/home/ghoseb/.emacs.d" "/home/ghoseb/.emacs.d/slime"))
+(setq load-path (append additional-paths load-path))
+(setq font-lock-maximum-decoration t)
+(setq visible-bell t)
+(setq require-final-newline t)
+(setq resize-minibuffer-frame t)
+(setq column-number-mode t)
+(setq-default transient-mark-mode t)
+(setq next-line-add-newlines nil)
+(setq blink-matching-paren t)
+(setq blink-matching-delay .25)
+(global-font-lock-mode 1 t)
+;; (blink-cursor-mode 0)
+(tool-bar-mode -1)
+(tooltip-mode -1)
+(set-scroll-bar-mode 'nil)
+(show-paren-mode 1)
+;; (set-frame-height (selected-frame) 46)
+;; (set-frame-width (selected-frame) 72)
+
+;; ----------------------
+;; Final newline handling
+;; ----------------------
+(setq require-final-newline t)
+(setq next-line-extends-end-of-buffer nil)
+(setq next-line-add-newlines nil)
+
+
+;; -------------------
+;; Everything in UTF-8
+;; -------------------
+(prefer-coding-system 'utf-8)
+(set-language-environment "utf-8")
+(set-default-coding-systems             'utf-8)
+(setq file-name-coding-system           'utf-8)
+(setq default-buffer-file-coding-system 'utf-8)
+(setq coding-system-for-write           'utf-8)
+(set-keyboard-coding-system             'utf-8)
+(set-terminal-coding-system             'utf-8)
+(set-clipboard-coding-system            'utf-8)
+(set-selection-coding-system            'utf-8)
+(setq default-process-coding-system '(utf-8 . utf-8))
+(add-to-list 'auto-coding-alist '("." . utf-8))
+
+;; ----------------------
+;; Don't take any backups
+;; ----------------------
+(setq backup-inhibited t)
+
+;; -----------
+;; Frame Setup
+;; -----------
+(setq initial-frame-alist '((top . 20)
+                            (left . 25)
+                            (width . 205)
+                            (height . 55)))
+(setq frame-title-format "%b")
+(setq icon-title-format  "%b")
+
+;; ---------
+;; TAB Setup
+;; ---------
+(setq-default tab-width 4
+	      standard-indent 4
+	      indent-tabs-mode nil)
+
+;; -------------
+;; Custom colors
+;; -------------
+;; (set-default-font "DejaVu Sans Mono-8")
+(set-default-font "Monaco-8")
+
+(require 'color-theme)
+(require 'color-theme-g0sub)
+(color-theme-initialize)
+(color-theme-g0sub)
+
+;; -----------------
+;; Misc key mappings
+;; -----------------
+(global-set-key [f1] 'search-forward)
+(global-set-key [f3] 'search-backward)
+(global-set-key [f2] 'replace-string)
+(global-set-key [f4] 'set-justification-full) ;JUSTIFY
+;; (global-set-key [f5] 'set-mark-command) ;MARK
+(global-set-key [f6] 'kill-ring-save)   ;COPY
+(global-set-key [f7] 'yank)             ;PASTE
+(global-set-key [f8] 'kill-region)      ;DELETE
+(global-set-key [f9] 'save-buffer)      ;SAVE
+(global-set-key [C-f7] 'compile)        ;COMPILE
+(global-set-key [C-f1] 'eshell)         ;ESHELL
+(global-set-key "\C-ca" 'auto-fill-mode)
+(global-set-key "\C-cw" 'woman)         ;WOMAN
+;; (Global-set-key "\C-cs" 'run-scheme)  ;MZSCHEME
+
+;; 'y' for 'yes', 'n' for 'no'
+(fset 'yes-or-no-p 'y-or-n-p)
+
+(setq query-replace-highlight t)
+(setq search-highlight t)
+
+(global-set-key (kbd "RET") 'newline-and-indent)
+
+;; -----------------
+;; Insert time stamp
+;; -----------------
+(defun insert-date ()
+  "Insert current date and time."
+  (interactive "*")
+  (insert (current-time-string)))
+
+;; ----------------------------------------
+;; Kill current buffer without confirmation
+;; ----------------------------------------
+(global-set-key "\C-xk" 'kill-current-buffer)
+(defun kill-current-buffer ()
+  "Kill the current buffer, without confirmation."
+  (interactive)
+  (kill-buffer (current-buffer)))
+
+;; ------
+;; AucTeX
+;; ------
+;; (require 'tex-site)
+;; (load "preview-latex.el" nil t t)
+
+;; ------
+;; Debian
+;; ------
+;; (require 'dpkg-dev-el)
+
+;; ---
+;; Lua
+;; ---
+;; (require 'lua-mode)
+
+;; ---------
+;; Automodes
+;; ---------
+(setq auto-mode-alist (append '(
+                                ("\\.py$" . python-mode)
+                                ("\\.conf$" . conf-mode)
+                                ("\\.sh$" . shell-script-mode)
+                                ("\\.txt$" . text-mode)
+                                ("\\.lua$" . lua-mode) ; Lua ;)
+                                ("\\.js$" . javascript-mode)
+                                ) auto-mode-alist))
+
+;; ---------
+;; Templates
+;; ---------
+(require 'template)
+(template-initialize)
+
+;; ------------
+;; General Info
+;; ------------
+(setq user-mail-address "b.ghose@ubuntu.com")
+(setq user-full-name "Baishampayan Ghose")
+
+;; ---------------------------
+;; Use Linux Style C Indenting
+;; ---------------------------
+(require 'cc-mode)
+(defun my-c-mode-hook ()
+  (c-set-style "linux")
+  (auto-fill-mode)         
+  (c-toggle-auto-hungry-state nil))
+
+(add-hook 'c-mode-hook 'my-c-mode-hook)
+
+;; --------------------
+;; Several useful hooks
+;; --------------------
+(add-hook 'before-save-hook 'time-stamp)
+(add-hook 'text-mode-hook 'turn-on-auto-fill)
+
+;; ------
+;; Python
+;; ------
+(setq python-mode-hook
+      '(lambda () (progn
+                    (set-variable 'py-indent-offset 4)
+                    (set-variable 'py-smart-indentation nil)
+                    (set-variable 'indent-tabs-mode nil))))
+(add-hook 'python-mode-hook 'auto-fill-mode)
+
+;; ---
+;; C++
+;; ---
+(c-add-style "my-style" 
+             '("stroustrup"
+               (indent-tabs-mode . nil) ;; use spaces rather than tabs
+               (c-basic-offset . 4) ;; indent by four spaces
+               (c-offsets-alist . ((inline-open . 0) ;; custom indentation rules
+                                   (brace-list-open . 0)
+                                   (statement-case-open . +)))))
+
+(defun my-c++-mode-hook ()
+  (c-set-style "my-style") ;; use my-style defined above
+  (auto-fill-mode)
+  (setq c-auto-newline nil)
+  (c-toggle-auto-hungry-state 1))
+
+(add-hook 'c++-mode-hook 'my-c++-mode-hook)
+
+;; -----
+;; WoMan
+;; -----
+(setq-default woman-use-own-frame nil)
+(setq-default Man-notify-method 'pushy)
+
+;; ----
+;; emms
+;; ----
+;; (add-to-list 'load-path "~/.emacs.d/emms/")
+;; (require 'emms-setup)
+;; (emms-standard)
+;; (emms-default-players)
+
+;; --------
+;; Org Mode
+;; --------
+(require 'org)
+(add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+(define-key global-map "\C-cl" 'org-store-link)
+(define-key global-map "\C-ca" 'org-agenda)
+(setq org-log-done t)
+(setq org-agenda-files (list "~/org/work.org"
+                             "~/org/study.org"
+                             ))
+(setq org-export-with-LaTeX-fragments t)
+
+;; --------
+;; MzScheme
+;; --------
+;; (require 'cmuscheme)
+
+(setq scheme-program-name "/usr/bin/mzscheme")
+(defvar mzscheme-program "/usr/bin/mzscheme")
+
+;; Start up Scheme
+(global-set-key [(f5)]
+                '(lambda ()
+                   (interactive)
+                   (require 'quack)
+                   (run-scheme mzscheme-program)))
+
+(require 'paredit)
+(autoload 'paredit-mode "paredit"
+  "Minor mode for pseudo-structurally editing Lisp code."
+  t)
+
+
+(add-hook 'emacs-lisp-mode-hook (lambda () (paredit-mode +1)))
+(add-hook 'scheme-mode-hook (lambda () (paredit-mode +1)))
+(add-hook 'slime-mode-hook (lambda () (paredit-mode +1)))
+(add-hook 'slime-repl-mode-hook (lambda () (paredit-mode +1)))
+;; ------
+;; Setnu+
+;; ------
+;; (require 'fit-frame)
+;; (require 'setnu+)
+
+;; (defun toggle-setnu-mode ()
+;;   (interactive)
+;;   (if setnu-mode
+;;       (setnu-mode -1)
+;;     (setnu-mode 1)))
+;; (global-set-key "\M-n" 'toggle-setnu-mode)
+
+;; ---------
+;; Ruby Mode
+;; ---------
+;; (require 'ruby-mode)
+;; (require 'ruby-electric)
+
+;; -----
+;; SLIME
+;; -----
+(require 'slime)
+(slime-setup :autodoc t)
+
+(defmacro defslime-start (name lisp)
+  `(defun ,name ()
+     (interactive)
+     (let ((inferior-lisp-program ,lisp))
+       (slime))))
+
+(setq common-lisp-hyperspec-root
+      "file:///home/ghoseb/Documents/HyperSpec/")
+(setq common-lisp-hyperspec-symbol-table
+       "/home/ghoseb/Documents/HyperSpec/Data/Map_Sym.txt")
+
+(defslime-start sbcl "/usr/bin/sbcl")
+(defslime-start ccl "/opt/ccl/scripts/ccl64 -K utf-8")
+(defslime-start acl "/opt/acl80/alisp")
+
+(defvar slime-net-coding-system
+  (find-if 'slime-find-coding-system 
+           '(utf-8-unix iso-latin-1-unix iso-8859-1-unix binary)))
+
+;; Customizations for Slime Lisp
+
+;; Slime mode
+(define-key slime-mode-map (kbd "C-t") 'transpose-sexps)
+(define-key slime-mode-map (kbd "C-M-t") 'transpose-chars)
+(define-key slime-mode-map (kbd "C-b") 'backward-sexp)
+(define-key slime-mode-map (kbd "C-M-b") 'backward-char)
+(define-key slime-mode-map (kbd "C-f") 'forward-sexp)
+(define-key slime-mode-map (kbd "C-M-f") 'forward-char)
+(define-key slime-mode-map (kbd "<f7>") 'vertical-split-slime-repl)
+(define-key slime-mode-map (kbd "C-c h") 'slime-hyperspec-lookup)
+(define-key inferior-slime-mode-map (kbd "C-c h") 'slime-hyperspec-lookup)
+(define-key slime-mode-map (kbd "C-TAB") 'slime-fuzzy-complete-symbol)
+(define-key slime-mode-map (kbd "TAB") 'slime-indent-and-complete-symbol)
+(define-key slime-repl-mode-map (kbd "C-TAB") 'slime-fuzzy-complete-symbol)
+
+(define-key slime-mode-map (kbd "<f5>") 'slime-selector)
+(define-key slime-repl-mode-map (kbd "<f5>") 'slime-selector)
+(define-key sldb-mode-map (kbd "<f5>") 'slime-selector)
+
+;; Balanced comments
+(define-key slime-mode-map (kbd "C-c ;") 'slime-insert-balanced-comments)
+(define-key slime-mode-map (kbd "C-c M-;") 'slime-remove-balanced-comments)
+
+;; Paredit mode
+(define-key paredit-mode-map (kbd "(") 'paredit-open-parenthesis)
+(define-key paredit-mode-map (kbd ")") 'paredit-close-parenthesis)
+
+(define-key paredit-mode-map (kbd "M-(") (lambda () (interactive) (insert "(")))
+(define-key paredit-mode-map (kbd "M-)") (lambda () (interactive) (insert ")")))
+
+(define-key paredit-mode-map (kbd "M-j") 'paredit-newline)
+(define-key paredit-mode-map (kbd "RET") nil)
+(define-key paredit-mode-map (kbd "C-i") 'slime-indent-and-complete-symbol)
+
+
+(define-key paredit-mode-map (kbd "C-t") 'transpose-sexps)
+(define-key paredit-mode-map (kbd "C-M-t") 'transpose-chars)
+(define-key paredit-mode-map (kbd "C-b") 'backward-sexp)
+(define-key paredit-mode-map (kbd "C-M-b") 'backward-char)
+(define-key paredit-mode-map (kbd "C-f") 'forward-sexp)
+(define-key paredit-mode-map (kbd "C-M-f") 'forward-char)
+(define-key paredit-mode-map (kbd "<C-M-backspace>") 'backward-kill-sexp)
+
+(custom-set-variables
+ '(browse-url-mozilla-program "firefox"))
+
+;; Uniquify
+(require 'uniquify)
+(eval-after-load 'uniquify
+  '(progn
+     (setq uniquify-buffer-name-style 'reverse)
+     (setq uniquify-separator "/")
+     (setq uniquify-after-kill-buffer-p t) ; rename after killing uniquified
+     (setq uniquify-ignore-buffers-re "^\\*")))
+
+;; Useful utility functions
+
+(defun revert-all-buffers()
+  "Refreshs all open buffers from their respective files"
+  (interactive)
+  (let* ((list (buffer-list))
+         (buffer (car list)))
+    (while buffer
+      (if (string-match "\\*" (buffer-name buffer)) 
+          (progn
+            (setq list (cdr list))
+            (setq buffer (car list)))
+          (progn
+            (set-buffer buffer)
+            (revert-buffer t t t)
+            (setq list (cdr list))
+            (setq buffer (car list))))))
+  (message "Refreshing open files"))
+
+(defun rename-file-and-buffer (new-name)
+  "Renames both current buffer and file it's visiting to NEW-NAME."
+  (interactive "sNew name: ")
+  (let ((name (buffer-name))
+	(filename (buffer-file-name)))
+    (if (not filename)
+	(message "Buffer '%s' is not visiting a file!" name)
+        (if (get-buffer new-name)
+            (message "A buffer named '%s' already exists!" new-name)
+            (progn (rename-file name new-name 1)
+                   (rename-buffer new-name)
+                   (set-visited-file-name new-name)
+                   (set-buffer-modified-p nil))))))
+
+(defun move-buffer-file (dir)
+  "Moves both current buffer and file it's visiting to DIR."
+  (interactive "DNew directory: ")
+  (let* ((name (buffer-name))
+	 (filename (buffer-file-name))
+	 (dir
+          (if (string-match dir "\\(?:/\\|\\\\)$")
+              (substring dir 0 -1) dir))
+	 (newname (concat dir "/" name)))
+    (if (not filename)
+	(message "Buffer '%s' is not visiting a file!" name)
+        (progn (copy-file filename newname 1)
+               (delete-file filename)
+               (set-visited-file-name newname)
+               (set-buffer-modified-p nil)
+               t))))
+
+;; Custom files
+(setq custom-file "~/.emacs-custom.el")
+(load custom-file 'noerror)
