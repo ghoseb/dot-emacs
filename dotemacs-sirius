@@ -1,5 +1,5 @@
 ;; ~/.emacs@trinka - Baishampayan Ghose <b.ghose@ubuntu.com> -*- emacs-lisp -*-
-;; Time-stamp: "2008-10-07 19:26:10 ghoseb"
+;; Time-stamp: "2008-11-24 20:11:47 ghoseb"
 
 ;; CL
 (require 'cl)
@@ -9,7 +9,7 @@
 ;; -----------------------------
 (setq inhibit-startup-message t)
 (setq additional-paths
-'("/home/ghoseb/.emacs.d" "/home/ghoseb/.emacs.d/slime"))
+'("/home/ghoseb/.emacs.d" "/home/ghoseb/.emacs.d/slime" "/home/ghoseb/.emacs.d/yasnippet"))
 (setq load-path (append additional-paths load-path))
 (setq font-lock-maximum-decoration t)
 (setq visible-bell t)
@@ -26,6 +26,7 @@
 (tooltip-mode -1)
 (set-scroll-bar-mode 'nil)
 (show-paren-mode 1)
+(savehist-mode 1)
 ;; (set-frame-height (selected-frame) 46)
 ;; (set-frame-width (selected-frame) 72)
 
@@ -93,7 +94,7 @@
 (global-set-key [f3] 'search-backward)
 (global-set-key [f2] 'replace-string)
 (global-set-key [f4] 'set-justification-full) ;JUSTIFY
-;; (global-set-key [f5] 'set-mark-command) ;MARK
+(global-set-key [f5] 'global-linum-mode);LINE NUMBERS
 (global-set-key [f6] 'kill-ring-save)   ;COPY
 (global-set-key [f7] 'yank)             ;PASTE
 (global-set-key [f8] 'kill-region)      ;DELETE
@@ -102,7 +103,6 @@
 (global-set-key [C-f1] 'eshell)         ;ESHELL
 (global-set-key "\C-ca" 'auto-fill-mode)
 (global-set-key "\C-cw" 'woman)         ;WOMAN
-;; (Global-set-key "\C-cs" 'run-scheme)  ;MZSCHEME
 
 ;; 'y' for 'yes', 'n' for 'no'
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -111,6 +111,11 @@
 (setq search-highlight t)
 
 (global-set-key (kbd "RET") 'newline-and-indent)
+
+;; For better Copy-Paste behaviour
+(global-set-key "\C-w" 'clipboard-kill-region)
+(global-set-key "\M-w" 'clipboard-kill-ring-save)
+(global-set-key "\C-y" 'clipboard-yank)
 
 ;; -----------------
 ;; Insert time stamp
@@ -153,9 +158,14 @@
                                 ("\\.conf$" . conf-mode)
                                 ("\\.sh$" . shell-script-mode)
                                 ("\\.txt$" . text-mode)
-                                ("\\.lua$" . lua-mode) ; Lua ;)
-                                ("\\.js$" . javascript-mode)
                                 ) auto-mode-alist))
+
+;; --------
+;; JS2 Mode
+;; --------
+(autoload 'js2-mode "js2" nil t)
+(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+(setq js2-use-font-lock-faces t)
 
 ;; ---------
 ;; Templates
@@ -166,7 +176,7 @@
 ;; ------------
 ;; General Info
 ;; ------------
-(setq user-mail-address "b.ghose@ubuntu.com")
+(setq user-mail-address "b.ghose@gmail.com")
 (setq user-full-name "Baishampayan Ghose")
 
 ;; ---------------------------
@@ -185,6 +195,18 @@
 ;; --------------------
 (add-hook 'before-save-hook 'time-stamp)
 (add-hook 'text-mode-hook 'turn-on-auto-fill)
+
+;; -----------------------
+;; Better colors in eshell
+;; -----------------------
+(require 'ansi-color)
+(require 'eshell)
+
+(defun eshell-handle-ansi-color ()
+  (ansi-color-apply-on-region eshell-last-output-start
+                              eshell-last-output-end))
+
+(add-to-list 'eshell-output-filter-functions 'eshell-handle-ansi-color)
 
 ;; ------
 ;; Python
@@ -214,6 +236,14 @@
   (c-toggle-auto-hungry-state 1))
 
 (add-hook 'c++-mode-hook 'my-c++-mode-hook)
+
+
+;; ---------
+;; Yasnippet
+;; ---------
+(require 'yasnippet)
+(yas/initialize)
+(yas/load-directory "/home/ghoseb/.emacs.d/yasnippet/snippets")
 
 ;; -----
 ;; WoMan
@@ -247,15 +277,15 @@
 ;; --------
 ;; (require 'cmuscheme)
 
-(setq scheme-program-name "/usr/bin/mzscheme")
-(defvar mzscheme-program "/usr/bin/mzscheme")
+;; (setq scheme-program-name "/usr/bin/mzscheme")
+;; (defvar mzscheme-program "/usr/bin/mzscheme")
 
-;; Start up Scheme
-(global-set-key [(f5)]
-                '(lambda ()
-                   (interactive)
-                   (require 'quack)
-                   (run-scheme mzscheme-program)))
+;; ;; Start up Scheme
+;; (global-set-key [(f5)]
+;;                 '(lambda ()
+;;                    (interactive)
+;;                    (require 'quack)
+;;                    (run-scheme mzscheme-program)))
 
 (require 'paredit)
 (autoload 'paredit-mode "paredit"
