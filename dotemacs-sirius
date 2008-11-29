@@ -1,5 +1,5 @@
-;; ~/.emacs@trinka - Baishampayan Ghose <b.ghose@ubuntu.com> -*- emacs-lisp -*-
-;; Time-stamp: "2008-11-24 20:11:47 ghoseb"
+;; ~/.emacs@sirius - Baishampayan Ghose <b.ghose@gmail.com> -*- emacs-lisp -*-
+;; Time-stamp: "2008-11-29 13:19:54 ghoseb"
 
 ;; CL
 (require 'cl)
@@ -21,14 +21,11 @@
 (setq blink-matching-paren t)
 (setq blink-matching-delay .25)
 (global-font-lock-mode 1 t)
-;; (blink-cursor-mode 0)
 (tool-bar-mode -1)
 (tooltip-mode -1)
 (set-scroll-bar-mode 'nil)
 (show-paren-mode 1)
 (savehist-mode 1)
-;; (set-frame-height (selected-frame) 46)
-;; (set-frame-width (selected-frame) 72)
 
 ;; ----------------------
 ;; Final newline handling
@@ -112,7 +109,9 @@
 
 (global-set-key (kbd "RET") 'newline-and-indent)
 
-;; For better Copy-Paste behaviour
+;; ---------------------------
+;; Better Copy-Paste behaviour
+;; ---------------------------
 (global-set-key "\C-w" 'clipboard-kill-region)
 (global-set-key "\M-w" 'clipboard-kill-ring-save)
 (global-set-key "\C-y" 'clipboard-yank)
@@ -133,22 +132,6 @@
   "Kill the current buffer, without confirmation."
   (interactive)
   (kill-buffer (current-buffer)))
-
-;; ------
-;; AucTeX
-;; ------
-;; (require 'tex-site)
-;; (load "preview-latex.el" nil t t)
-
-;; ------
-;; Debian
-;; ------
-;; (require 'dpkg-dev-el)
-
-;; ---
-;; Lua
-;; ---
-;; (require 'lua-mode)
 
 ;; ---------
 ;; Automodes
@@ -272,49 +255,18 @@
                              ))
 (setq org-export-with-LaTeX-fragments t)
 
-;; --------
-;; MzScheme
-;; --------
-;; (require 'cmuscheme)
-
-;; (setq scheme-program-name "/usr/bin/mzscheme")
-;; (defvar mzscheme-program "/usr/bin/mzscheme")
-
-;; ;; Start up Scheme
-;; (global-set-key [(f5)]
-;;                 '(lambda ()
-;;                    (interactive)
-;;                    (require 'quack)
-;;                    (run-scheme mzscheme-program)))
-
+;; -------
+;; Paredit
+;; -------
 (require 'paredit)
 (autoload 'paredit-mode "paredit"
   "Minor mode for pseudo-structurally editing Lisp code."
   t)
 
-
 (add-hook 'emacs-lisp-mode-hook (lambda () (paredit-mode +1)))
 (add-hook 'scheme-mode-hook (lambda () (paredit-mode +1)))
 (add-hook 'slime-mode-hook (lambda () (paredit-mode +1)))
 (add-hook 'slime-repl-mode-hook (lambda () (paredit-mode +1)))
-;; ------
-;; Setnu+
-;; ------
-;; (require 'fit-frame)
-;; (require 'setnu+)
-
-;; (defun toggle-setnu-mode ()
-;;   (interactive)
-;;   (if setnu-mode
-;;       (setnu-mode -1)
-;;     (setnu-mode 1)))
-;; (global-set-key "\M-n" 'toggle-setnu-mode)
-
-;; ---------
-;; Ruby Mode
-;; ---------
-;; (require 'ruby-mode)
-;; (require 'ruby-electric)
 
 ;; -----
 ;; SLIME
